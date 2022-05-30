@@ -1,6 +1,6 @@
 from sender import Sender
 from parity import get_parity
-from utils import ascii_to_frames_with_parity, frames_to_ascii
+from utils import ascii_to_frames_with_parity, frames_to_ascii, print_transmission_correctness
 
 sender = Sender(get_parity)
 
@@ -12,4 +12,7 @@ sender.send_frames(ascii_to_frames_with_parity(stringToSend))
 
 ### PRINTING RECEIVED FRAMES
 
-print(f"Received string: {frames_to_ascii(sender.receiver.framesReceived)}")
+receivedString = frames_to_ascii(sender.receiver.framesReceived)
+print(f"Received string: {receivedString}")
+
+print_transmission_correctness(stringToSend, receivedString)
