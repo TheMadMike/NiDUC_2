@@ -29,7 +29,7 @@ class Sender:
 
 
     def send_frame(self, frame: Frame):
-        print_debug(f"SENDING: No: {self.frameNumber} Data: {hex(frame.data)}")
+        print_debug(f"SENDING: No: {self.frameNumber} Data: {frame.data}")
 
         frameToSend = frame.copy()
         if self.generateNoise is not None:

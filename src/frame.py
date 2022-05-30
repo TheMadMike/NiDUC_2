@@ -1,7 +1,8 @@
 class Frame:
     number: int
-    data: int
     size: int
+    data: int
+    checksum: int = 0
 
     def __init__(self, number, data, size):
         self.number = number

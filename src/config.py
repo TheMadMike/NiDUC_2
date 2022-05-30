@@ -1,1 +1,1 @@
-debug_printing = False
+debug_printing = True
