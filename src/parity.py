@@ -1,5 +1,4 @@
-from src.frame import Frame
-
+from frame import Frame
 
 def get_parity(frame: Frame):
     ones = 0
