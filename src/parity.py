@@ -1,19 +1,10 @@
-from frame import Frame
-
-def get_parity(frame: Frame):
+def parity(data: list, size: int):
     ones = 0
-    for i in range(0, frame.size):
-        if (frame.data >> i) & 1:
+    for i in range(0, size * 8):
+        if (data[i // 8] >> (i % 8) ) & 1:
             ones += 1
             
     return int(ones % 2 != 0)
 
-def ascii_to_frames_with_parity(string: str):
-    frames = []
-    for i in range(0, len(string)):
-        frame = Frame(i, 0, 9)
-        frame.data = ord(string[i])
-        frame.data |= (get_parity(frame) << 8)
-        frames.append(frame)
-    
-    return frames
+def append_parity_bit(data: list, size: int):
+    data.append(parity(data, size))

@@ -1,5 +1,3 @@
-from frame import Frame
-
 CRCTable =[
  0, 0x77073096, 0xEE0E612C, 0x990951BA,
  0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
@@ -67,22 +65,12 @@ CRCTable =[
  0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
 ]
 
-def crc32(data: int):
+def crc32(data: list):
     crc32 = 0xFFFFFFFF
 
-    lookupIndex = (crc32 ^ (data & 0xff)) & 0xff
-    crc32 = (crc32 >> 8) ^ CRCTable[lookupIndex]
+    for i in range(0, len(data)):
+        lookupIndex = (crc32 ^ (data[i] & 0xff)) & 0xff
+        crc32 = (crc32 >> 8) ^ CRCTable[lookupIndex]
 
     crc32 ^= 0xFFFFFFFF
     return crc32
-
-def string_to_crc32_frames (string):
-    frames = []
-    for i, char in enumerate(string):
-        frame = Frame(i, ord(char), 40)
-        frame.checksum = crc32(frame.data)
-        frames.append(frame)
-    return frames
-
-def check_crc32_frame (frame : Frame):
-    return crc32(frame.data) != frame.checksum

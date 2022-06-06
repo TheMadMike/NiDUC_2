@@ -1,25 +1,36 @@
-from sender import Sender
-from parity import get_parity, ascii_to_frames_with_parity
-from doubling import ascii_to_frames_with_doubling, check_doubling
-from utils import frames_to_ascii, print_transmission_correctness
-from errors import generate_low_noise
-from crc32 import string_to_crc32_frames, check_crc32_frame
+from komm import BinarySymmetricChannel
+from parity import append_parity_bit, parity
+from utility import bits_to_bytes, string_to_byte_list, byte_list_to_string, bytes_to_bits
 
-sender = Sender(check_crc32_frame)
-#sender.set_noise_function(generate_low_noise_for_string)
+def test_parity_bit(string: str, channel, retries):
+    detected = 0
+    undetected = 0
 
-### SENDING FRAMES
-stringToSend = "Hello, world!"
-print(f"Sending string: {stringToSend}")
+    for i in range(0, retries):
+        sent = string_to_byte_list(string)
+        append_parity_bit(sent, len(sent))
+        receieved = channel(bytes_to_bits(sent))
 
-sender.send_frames(string_to_crc32_frames(stringToSend))
+        receieved_str = byte_list_to_string(bits_to_bytes(receieved))
+        receieved_str = receieved_str[0:len(receieved_str) - 1]
 
-### PRINTING RECEIVED FRAMES
+        if string != receieved_str:
+            receieved_bytes = bits_to_bytes(receieved)
+            if parity(receieved_bytes, len(receieved_bytes)):
+                detected += 1
+            else:
+                undetected += 1
 
-receivedString = frames_to_ascii(sender.receiver.framesReceived)
-print(f"Received string: {receivedString}")
+    print(f"Undetected: {undetected} / Detected: {detected}")
 
-print_transmission_correctness(stringToSend, receivedString)
+### Parity bit ###
+string_to_send = "Hello, world! \n"
+bsc = BinarySymmetricChannel(0.1)
 
-print(f"Transmisssions in total: {sender.transmissionsTotal}")
-print(f"Error rate: {(1.0 - len(stringToSend) / sender.transmissionsTotal) * 100.0 : 0.2f}%")
+test_parity_bit(string_to_send, bsc, 100)
+
+### Doubling ###
+
+
+
+### CRC32 ###
