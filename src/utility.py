@@ -32,3 +32,11 @@ def bits_to_bytes(bit_list: list):
         x += 1
 
     return byte_list
+
+def get_bit_error(a: list, b: list):
+    error = 0
+    for i in range(0, len(a)):
+        if a[i] != b[i]:
+            error += 1
+    
+    return error

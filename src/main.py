@@ -1,36 +1,21 @@
 from komm import BinarySymmetricChannel
-from parity import append_parity_bit, parity
-from utility import bits_to_bytes, string_to_byte_list, byte_list_to_string, bytes_to_bits
+from crc32 import generate_lookup_table
+from gilbert import gilbert_elliot_channel
 
-def test_parity_bit(string: str, channel, retries):
-    detected = 0
-    undetected = 0
+from tests import test_crc32, test_doubling, test_parity_bit
 
-    for i in range(0, retries):
-        sent = string_to_byte_list(string)
-        append_parity_bit(sent, len(sent))
-        receieved = channel(bytes_to_bits(sent))
-
-        receieved_str = byte_list_to_string(bits_to_bytes(receieved))
-        receieved_str = receieved_str[0:len(receieved_str) - 1]
-
-        if string != receieved_str:
-            receieved_bytes = bits_to_bytes(receieved)
-            if parity(receieved_bytes, len(receieved_bytes)):
-                detected += 1
-            else:
-                undetected += 1
-
-    print(f"Undetected: {undetected} / Detected: {detected}")
-
-### Parity bit ###
-string_to_send = "Hello, world! \n"
+string_to_send = "Hi!"
 bsc = BinarySymmetricChannel(0.1)
+gec = gilbert_elliot_channel(0.1, 0.1, 1.0)
 
-test_parity_bit(string_to_send, bsc, 100)
+POLYNOMIAL = 0xEDB88320
+CRCLookupTable = []
+generate_lookup_table(POLYNOMIAL, CRCLookupTable)
 
-### Doubling ###
+channel = bsc
 
+test_parity_bit(string_to_send, channel, 1000)
 
+test_doubling(string_to_send, channel, 1000)
 
-### CRC32 ###
+test_crc32(string_to_send, channel, 1000, CRCLookupTable)
