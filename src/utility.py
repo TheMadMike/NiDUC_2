@@ -22,6 +22,7 @@ def bytes_to_bits(byte_list: list):
 
 def bits_to_bytes(bit_list: list):
     byte_list = []
+    byte_list.append(0)
     for i in range(0, len(bit_list) // 8):
         byte_list.append(0)
 

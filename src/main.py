@@ -4,18 +4,23 @@ from gilbert import gilbert_elliot_channel
 
 from tests import test_crc32, test_doubling, test_parity_bit
 
-string_to_send = "Hi!"
-bsc = BinarySymmetricChannel(0.1)
-gec = gilbert_elliot_channel(0.1, 0.1, 1.0)
-
-POLYNOMIAL = 0xEDB88320
+POLYNOMIAL = 0b1
 CRCLookupTable = []
 generate_lookup_table(POLYNOMIAL, CRCLookupTable)
 
-channel = bsc
+data_to_send = [0, 1, 0, 0]
 
-test_parity_bit(string_to_send, channel, 1000)
+def perform_tests(repetitions, channel):
+    test_parity_bit(data_to_send, channel, 1000)
+    test_doubling(data_to_send, channel, 1000)
+    test_crc32(data_to_send, channel, 1000, CRCLookupTable)
 
-test_doubling(string_to_send, channel, 1000)
+bsc = BinarySymmetricChannel(0.99)
+gec = gilbert_elliot_channel(0.1, 0.1, 1.0)
 
-test_crc32(string_to_send, channel, 1000, CRCLookupTable)
+print ("Repetitions: 1000, Channel: BSC")
+perform_tests(1000, bsc)
+
+print ("Repetitions: 1000, Channel: Gilbert-Elliot")
+perform_tests(1000, gec)
+

@@ -1,10 +1,9 @@
-def parity(data: list, size: int):
+def parity(data: list):
     ones = 0
-    for i in range(0, size * 8):
-        if (data[i // 8] >> (i % 8) ) & 1:
-            ones += 1
+    for bit in data:
+        ones += bit
             
     return int(ones % 2 != 0)
 
-def append_parity_bit(data: list, size: int):
-    data.append(parity(data, size))
+def append_parity_bit(data: list):
+    data.append(parity(data))
